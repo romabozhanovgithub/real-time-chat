@@ -4,6 +4,23 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+sqlalchemy = {extras = ["asyncio"], version = "*"}
+asyncpg = "*"
+pydantic = {extras = ["email"], version = "*"}
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
+mypy = "*"
+black = "*"
+flake8 = "*"
+aio-pika = "*"
+celery = "*"
+httpx = "*"
+python-multipart = "*"
+pytest-asyncio = "*"
+pytest-env = "*"
+aioboto3 = "*"
 
 [dev-packages]
 
