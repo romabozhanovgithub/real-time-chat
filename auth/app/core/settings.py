@@ -9,7 +9,11 @@ class Settings(BaseSettings):
     # AWS
     AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: str
-    AWS_REGION: str
+    AWS_DEFAULT_REGION: str
+    AWS_ENDPOINT_URL: str | None = None
+
+    class Config:
+        env_file = ".env"
 
 
 settings = Settings()
