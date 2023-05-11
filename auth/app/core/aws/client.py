@@ -19,9 +19,11 @@ class AWSClient:
         if settings.AWS_ENDPOINT_URL:
             credentials["endpoint_url"] = settings.AWS_ENDPOINT_URL
         return credentials
-    
+
     @property
     def resource(self) -> ServiceResource:
         if self._resource is None:
-            self._resource: ServiceResource = aioboto3.resource(**self.credentials)
+            self._resource: ServiceResource = aioboto3.resource(
+                **self.credentials
+            )
         return self._resource
