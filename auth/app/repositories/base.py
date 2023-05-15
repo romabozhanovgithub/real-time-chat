@@ -21,3 +21,12 @@ class BaseRepository(DynamoDB):
             key[self.sort_key] = sort_key
         response = await self.table.get_item(Key=key)
         return response.get("Item", {})
+
+    async def _get_all_items(self, method: Callable, **kwargs) -> list[dict]:
+        response = await method(**kwargs)
+        items: list = response["Items"]
+        while "LastEvaluatedKey" in response:
+            kwargs["ExclusiveStartKey"] = response["LastEvaluatedKey"]
+            response = await method(**kwargs)
+            items.extend(response["Items"])
+        return items
