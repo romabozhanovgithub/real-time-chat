@@ -8,3 +8,7 @@ class BaseRepository(DynamoDB):
     table_name: str
     partition_key: str
     sort_key: str | None = None
+
+    async def create(self, item: dict) -> dict:
+        await self.table.put_item(Item=item)
+        return item
