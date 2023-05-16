@@ -30,3 +30,26 @@ class BaseRepository(DynamoDB):
             response = await method(**kwargs)
             items.extend(response["Items"])
         return items
+
+    async def query(
+        self,
+        key_condition_expression: ConditionBase,
+        index_name: str | None = None,
+        select: str | None = None,
+        filter_expression: ConditionBase | None = None,
+        order: Literal["ASC", "DESC"] = "ASC",
+        limit: int | None = None,
+        all_items: bool = False,
+    ) -> list[dict]:
+        kwargs = {
+            "KeyConditionExpression": key_condition_expression,
+            "IndexName": index_name,
+            "Select": select,
+            "FilterExpression": filter_expression,
+            "ScanIndexForward": order == "ASC",
+            "Limit": limit,
+        }
+        if all_items:
+            return await self._get_all_items(self.table.query, **kwargs)
+        response = await self.table.query(**kwargs)
+        return response["Items"]
