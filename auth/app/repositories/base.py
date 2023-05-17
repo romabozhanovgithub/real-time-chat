@@ -53,3 +53,20 @@ class BaseRepository(DynamoDB):
             return await self._get_all_items(self.table.query, **kwargs)
         response = await self.table.query(**kwargs)
         return response["Items"]
+
+    async def scan(
+        self,
+        filter_expression: ConditionBase | None = None,
+        select: str | None = None,
+        limit: int | None = None,
+        all_items: bool = False,
+    ) -> list[dict]:
+        kwargs = {
+            "Select": select,
+            "FilterExpression": filter_expression,
+            "Limit": limit,
+        }
+        if all_items:
+            return await self._get_all_items(self.table.scan, **kwargs)
+        response = await self.table.scan(**kwargs)
+        return response["Items"]
