@@ -70,3 +70,7 @@ class BaseRepository(DynamoDB):
             return await self._get_all_items(self.table.scan, **kwargs)
         response = await self.table.scan(**kwargs)
         return response["Items"]
+
+    async def update(self, item: dict) -> dict:
+        await self.table.put_item(Item=item)
+        return item
