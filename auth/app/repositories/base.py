@@ -74,3 +74,11 @@ class BaseRepository(DynamoDB):
     async def update(self, item: dict) -> dict:
         await self.table.put_item(Item=item)
         return item
+
+    async def delete(
+        self, partition_key: str, sort_key: str | None = None
+    ) -> None:
+        key = {self.partition_key: partition_key}
+        if sort_key:
+            key[self.sort_key] = sort_key
+        await self.table.delete_item(Key=key)
