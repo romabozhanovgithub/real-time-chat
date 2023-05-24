@@ -82,3 +82,11 @@ class BaseRepository(DynamoDB):
         if sort_key:
             key[self.sort_key] = sort_key
         await self.table.delete_item(Key=key)
+
+    async def delete_items(self, filter_expression: list) -> None:
+        kwargs = {"FilterExpression": filter_expression}
+        async with self.batch_writer:
+            async for item in self.scan(**kwargs):
+                await self.batch_writer.delete_item(
+                    Key={self.partition_key: item[self.partition_key]}
+                )
