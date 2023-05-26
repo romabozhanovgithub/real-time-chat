@@ -14,7 +14,7 @@ class AWSClient:
             "service_name": self.service_name,
             "aws_access_key_id": settings.AWS_ACCESS_KEY_ID,
             "aws_secret_access_key": settings.AWS_SECRET_ACCESS_KEY,
-            "AWS_DEFAULT_REGION": settings.AWS_DEFAULT_REGION,
+            "aws_default_region": settings.AWS_DEFAULT_REGION,
         }
         if settings.AWS_ENDPOINT_URL:
             credentials["endpoint_url"] = settings.AWS_ENDPOINT_URL
