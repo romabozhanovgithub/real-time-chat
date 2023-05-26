@@ -19,6 +19,7 @@ python-multipart = "*"
 pytest-asyncio = "*"
 pytest-env = "*"
 aioboto3 = "*"
+community = {ref = "package", git = "https://github.com/romabozhanovgithub/real-time-chat.git"}
 
 [dev-packages]
 
