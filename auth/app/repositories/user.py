@@ -7,3 +7,6 @@ class UserRepository(BaseRepository):
 
     async def create(self, item: dict) -> dict:
         return await self.put_item(item)
+
+    async def get_by_username(self, username: str) -> dict:
+        return await self.get_item(username)
