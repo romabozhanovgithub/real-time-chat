@@ -478,7 +478,7 @@
         },
         "community": {
             "git": "https://github.com/romabozhanovgithub/real-time-chat.git",
-            "ref": "ea1e27a61547daa727278fc47cad1cf53ce16996"
+            "ref": "2ee7c5d648e874b7fe1aebf8980175544276175b"
         },
         "cryptography": {
             "hashes": [
