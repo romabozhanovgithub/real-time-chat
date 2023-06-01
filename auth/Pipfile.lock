@@ -478,7 +478,7 @@
         },
         "community": {
             "git": "https://github.com/romabozhanovgithub/real-time-chat.git",
-            "ref": "2ee7c5d648e874b7fe1aebf8980175544276175b"
+            "ref": "9ea344593ca87e986ea14bcf78db8c933223a376"
         },
         "cryptography": {
             "hashes": [
@@ -855,11 +855,11 @@
         },
         "mypy-boto3-dynamodb": {
             "hashes": [
-                "sha256:9cecd3d3328f0ab7382a4517b0bc533d565c251d39467c086ae41700588c950e",
-                "sha256:cbce7bd1c12a3d7ac15cb33690d14e9ca0591b57936bf3ad47562105280e1356"
+                "sha256:5a832531ac2c81b01dea20ef79f7dd5a2014c3736566a498585f5f46d642adc4",
+                "sha256:a527270b304f1a517093fff3709c7831fc5616a91bb1c9b6164fa71e37481d84"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==1.26.158"
+            "version": "==1.26.164"
         },
         "mypy-extensions": {
             "hashes": [
@@ -1157,11 +1157,11 @@
         },
         "typing-extensions": {
             "hashes": [
-                "sha256:88a4153d8505aabbb4e13aacb7c486c2b4a33ca3b3f807914a9b4c844c471c26",
-                "sha256:d91d5919357fe7f681a9f2b5b4cb2a5f1ef0a1e9f59c4d8ff0d3491e05c0ffd5"
+                "sha256:5d8c9dac95c27d20df12fb1d97b9793ab8b2af8a3a525e68c80e21060c161771",
+                "sha256:935ccf31549830cda708b42289d44b6f74084d616a00be651601a4f968e77c82"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.6.3"
+            "version": "==4.7.0"
         },
         "tzdata": {
             "hashes": [
