@@ -28,3 +28,6 @@ class UserRepository(BaseRepository):
             partition_key=username,
             **kwargs,
         )
+    
+    async def delete(self, username: str) -> ItemTable:
+        return await self.delete_item(partition_key=username)
