@@ -7,7 +7,11 @@ class UserRepository(BaseRepository):
     table_name = "users"
     partition_key = "username"
 
-    async def create(self, item: dict) -> ItemTable:
+    async def create(self, item: ItemTable) -> ItemTable:
+        """
+        Create a new user
+        """
+
         return await self.put_item(item)
 
     async def get_by_username(self, username: str) -> ItemTable:
