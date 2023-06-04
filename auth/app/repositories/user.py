@@ -15,6 +15,10 @@ class UserRepository(BaseRepository):
         return await self.put_item(item)
 
     async def get_by_username(self, username: str) -> ItemTable:
+        """
+        Get a user by username
+        """
+
         return await self.get_item(partition_key=username)
     
     async def get_by_email(self, email: str) -> ItemTable:
@@ -26,7 +30,7 @@ class UserRepository(BaseRepository):
     async def update(
         self,
         username: str,
-        **kwargs,
+        **kwargs: ItemTable,
     ) -> ItemTable:
         return await self.update_item(
             partition_key=username,
