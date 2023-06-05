@@ -22,6 +22,10 @@ class UserRepository(BaseRepository):
         return await self.get_item(partition_key=username)
     
     async def get_by_email(self, email: str) -> ItemTable:
+        """
+        Get a user by email
+        """
+
         response = await self.scan(
             filter_expression=Key("email").eq(email),
         )
