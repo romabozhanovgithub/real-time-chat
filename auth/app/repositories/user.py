@@ -36,6 +36,10 @@ class UserRepository(BaseRepository):
         username: str,
         **kwargs: ItemTable,
     ) -> ItemTable:
+        """
+        Update a user by username
+        """
+
         return await self.update_item(
             partition_key=username,
             **kwargs,
