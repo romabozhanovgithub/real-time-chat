@@ -46,4 +46,8 @@ class UserRepository(BaseRepository):
         )
     
     async def delete(self, username: str) -> ItemTable:
+        """
+        Delete a user by username
+        """
+
         return await self.delete_item(partition_key=username)
