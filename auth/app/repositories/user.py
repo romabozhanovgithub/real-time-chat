@@ -4,6 +4,10 @@ from community.core.types import ItemTable
 
 
 class UserRepository(BaseRepository):
+    """
+    This class is responsible for operations on the user table
+    """
+
     table_name = "users"
     partition_key = "username"
 
