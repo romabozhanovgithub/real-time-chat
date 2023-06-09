@@ -24,7 +24,7 @@ class UserRepository(BaseRepository):
         """
 
         return await self.get_item(partition_key=username)
-    
+
     async def get_by_email(self, email: str) -> ItemTable:
         """
         Get a user by email
@@ -34,7 +34,7 @@ class UserRepository(BaseRepository):
             filter_expression=Key("email").eq(email),
         )
         return response[0] if response else {}
-    
+
     async def update(
         self,
         username: str,
@@ -48,7 +48,7 @@ class UserRepository(BaseRepository):
             partition_key=username,
             **kwargs,
         )
-    
+
     async def delete(self, username: str) -> ItemTable:
         """
         Delete a user by username
