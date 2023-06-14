@@ -15,3 +15,11 @@ class PasswordsDoNotMatchException(HTTPException):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Passwords do not match",
         )
+
+
+class InvalidPasswordException(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid password",
+        )
