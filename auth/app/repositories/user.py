@@ -2,6 +2,8 @@ from boto3.dynamodb.conditions import Key
 from community.repositories.dynamodb import BaseRepository
 from community.core.types import ItemTable
 
+from app.schemas import UserTableSchema
+
 
 class UserRepository(BaseRepository):
     """
@@ -11,21 +13,23 @@ class UserRepository(BaseRepository):
     table_name = "users"
     partition_key = "username"
 
-    async def create(self, item: ItemTable) -> ItemTable:
+    async def create(self, item: ItemTable) -> UserTableSchema:
         """
         Create a new user
         """
 
-        return await self.put_item(item)
+        response = await self.put_item(item)
+        return UserTableSchema(**response)
 
-    async def get_by_username(self, username: str) -> ItemTable:
+    async def get_by_username(self, username: str) -> UserTableSchema | None:
         """
         Get a user by username
         """
 
-        return await self.get_item(partition_key=username)
+        response = await self.get_item(partition_key=username)
+        return UserTableSchema(**response) if response else None
 
-    async def get_by_email(self, email: str) -> ItemTable:
+    async def get_by_email(self, email: str) -> UserTableSchema | None:
         """
         Get a user by email
         """
@@ -33,23 +37,24 @@ class UserRepository(BaseRepository):
         response = await self.scan(
             filter_expression=Key("email").eq(email),
         )
-        return response[0] if response else {}
+        return UserTableSchema(**response[0]) if response else None
 
     async def update(
         self,
         username: str,
-        **kwargs: ItemTable,
-    ) -> ItemTable:
+        item: ItemTable,
+    ) -> UserTableSchema:
         """
         Update a user by username
         """
 
-        return await self.update_item(
+        response = await self.update_item(
             partition_key=username,
-            **kwargs,
+            data=item,
         )
+        return UserTableSchema(**response)
 
-    async def delete(self, username: str) -> ItemTable:
+    async def delete(self, username: str) -> None:
         """
         Delete a user by username
         """
