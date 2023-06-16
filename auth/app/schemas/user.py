@@ -17,3 +17,17 @@ class UserTableSchema(BaseModel):
 
     class Config(BaseConfig):
         pass
+
+
+class UserResponseSchema(BaseModel):
+    id: str
+    username: str
+    email: EmailStr
+    first_name: str
+    last_name: str
+    is_active: bool
+    is_superuser: bool
+    is_verified: bool
+
+    class Config(BaseConfig):
+        pass
