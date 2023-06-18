@@ -25,5 +25,15 @@ class SignUpRequestSchema(BaseModel):
             raise InvalidUsernameException()
         return v.lower()
 
+    @validator("password")
+    def validate_password(
+        cls, v: str, values: dict[str, Any], **kwargs: dict[str, Any]
+    ) -> str:
+        if not validate_password(v):
+            raise InvalidPasswordException()
+        elif v != values["confirm_password"]:
+            raise PasswordsDoNotMatchException()
+        return v
+
     class Config(BaseConfig):
         pass
