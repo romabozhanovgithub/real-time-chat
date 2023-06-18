@@ -19,5 +19,11 @@ class SignUpRequestSchema(BaseModel):
     password: str = Field(..., min_length=8)
     confirm_password: str = Field(..., min_length=8)
 
+    @validator("username")
+    def validate_username(cls, v: str, **kwargs: dict[str, Any]) -> str:
+        if not validate_username(v):
+            raise InvalidUsernameException()
+        return v.lower()
+
     class Config(BaseConfig):
         pass
