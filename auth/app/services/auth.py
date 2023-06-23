@@ -25,6 +25,10 @@ class AuthService:
         return pwd_context.verify(plain_password, hashed_password)
     
     def _hash_password(password: str) -> str:
+        """
+        Create a hash of the password
+        """
+
         return pwd_context.hash(password)
 
     async def sign_up(self, user: SignUpRequestSchema) -> UserResponseSchema:
