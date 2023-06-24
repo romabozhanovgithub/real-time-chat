@@ -22,6 +22,10 @@ class AuthService:
         self.user_repository = user_repository
         
     def _verify_password(plain_password, hashed_password) -> bool:
+        """
+        Verify the password
+        """
+
         return pwd_context.verify(plain_password, hashed_password)
     
     def _hash_password(password: str) -> str:
