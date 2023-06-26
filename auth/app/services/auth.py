@@ -39,7 +39,6 @@ class AuthService:
         """
         Create a new user
         """
-        
 
         response = await self.user_repository.create({
             **user.dict(
