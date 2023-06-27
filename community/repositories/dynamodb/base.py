@@ -1,4 +1,4 @@
-from typing import Callable, Literal
+from typing import Any, Callable, Literal
 from boto3.dynamodb.conditions import ConditionBase
 
 from community.aws import DynamoDB
@@ -9,18 +9,12 @@ class BaseRepository(DynamoDB):
     partition_key: str
     sort_key: str | None = None
 
-    async def create(self, item: dict) -> dict:
-        await self.table.put_item(Item=item)
-        return item
-
-    async def get(
-        self, partition_key: str, sort_key: str | None = None
-    ) -> dict:
-        key = {self.partition_key: partition_key}
-        if sort_key:
-            key[self.sort_key] = sort_key
-        response: dict = await self.table.get_item(Key=key)
-        return response.get("Item", {})
+    def _create_params(self, **kwargs: dict) -> dict:
+        params = {}
+        for key, value in kwargs.items():
+            if value is not None:
+                params[key] = value
+        return params
 
     async def _get_all_items(self, method: Callable, **kwargs) -> list[dict]:
         response = await method(**kwargs)
@@ -30,6 +24,32 @@ class BaseRepository(DynamoDB):
             response = await method(**kwargs)
             items.extend(response["Items"])
         return items
+    
+    async def _get_items(
+        self,
+        method: Callable,
+        all_items: bool = False,
+        **kwargs
+    ) -> list[dict]:
+        if all_items:
+            return await self._get_all_items(method, **kwargs)
+        response = await method(**kwargs)
+        return response["Items"]
+
+    async def put_item(
+        self, item: dict
+    ) -> dict:
+        await self.table.put_item(Item=item)
+        return item
+
+    async def get_item(
+        self, partition_key: str, sort_key: str | None = None
+    ) -> dict:
+        key = {self.partition_key: partition_key}
+        if sort_key:
+            key[self.sort_key] = sort_key
+        response: dict = await self.table.get_item(Key=key)
+        return response.get("Item", {})
 
     async def query(
         self,
@@ -38,21 +58,22 @@ class BaseRepository(DynamoDB):
         select: str | None = None,
         filter_expression: ConditionBase | None = None,
         order: Literal["ASC", "DESC"] = "ASC",
+        exclude_start_key: Any | None = None,
         limit: int | None = None,
         all_items: bool = False,
     ) -> list[dict]:
-        kwargs = {
-            "KeyConditionExpression": key_condition_expression,
-            "IndexName": index_name,
-            "Select": select,
-            "FilterExpression": filter_expression,
-            "ScanIndexForward": order == "ASC",
-            "Limit": limit,
-        }
-        if all_items:
-            return await self._get_all_items(self.table.query, **kwargs)
-        response = await self.table.query(**kwargs)
-        return response["Items"]
+        kwargs = self._create_params(
+            KeyConditionExpression=key_condition_expression,
+            IndexName=index_name,
+            Select=select,
+            FilterExpression=filter_expression,
+            ExclusiveStartKey=exclude_start_key,
+            ScanIndexForward=order == "ASC",
+            Limit=limit,
+        )
+        return await self._get_items(
+            self.table.query, all_items, **kwargs
+        )
 
     async def scan(
         self,
@@ -61,21 +82,20 @@ class BaseRepository(DynamoDB):
         limit: int | None = None,
         all_items: bool = False,
     ) -> list[dict]:
-        kwargs = {
-            "Select": select,
-            "FilterExpression": filter_expression,
-            "Limit": limit,
-        }
-        if all_items:
-            return await self._get_all_items(self.table.scan, **kwargs)
-        response = await self.table.scan(**kwargs)
-        return response["Items"]
+        kwargs = self._create_params(
+            FilterExpression=filter_expression,
+            Select=select,
+            Limit=limit,
+        )
+        return await self._get_items(
+            self.table.scan, all_items, **kwargs
+        )
 
-    async def update(self, item: dict) -> dict:
+    async def put_item(self, item: dict) -> dict:
         await self.table.put_item(Item=item)
         return item
 
-    async def delete(
+    async def delete_item(
         self, partition_key: str, sort_key: str | None = None
     ) -> None:
         key = {self.partition_key: partition_key}
