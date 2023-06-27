@@ -1,7 +1,7 @@
 from aioboto3.dynamodb.table import BatchWriter
 from mypy_boto3_dynamodb.service_resource import Table
 
-from aws.client import AWSClient
+from community.aws.client import AWSClient
 
 
 class DynamoDB(AWSClient):
