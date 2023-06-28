@@ -1,12 +1,11 @@
-import aioboto3
 from mypy_boto3_dynamodb import ServiceResource
 
 from community.core import settings
+from community.aws.resource import AWSResource
 
 
 class AWSClient:
     service_name: str
-    _resource: ServiceResource | None = None
 
     @property
     def credentials(self) -> dict[str, str]:
@@ -19,11 +18,7 @@ class AWSClient:
         if settings.AWS_ENDPOINT_URL:
             credentials["endpoint_url"] = settings.AWS_ENDPOINT_URL
         return credentials
-
+    
     @property
     def resource(self) -> ServiceResource:
-        if self._resource is None:
-            self._resource: ServiceResource = aioboto3.resource(
-                **self.credentials
-            )
-        return self._resource
+        return AWSResource(**self.credentials)
