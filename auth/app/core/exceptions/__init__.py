@@ -1,5 +1,6 @@
-from app.core.exceptions import (  # noqa: F401
+from app.core.exceptions.auth import (  # noqa: F401
     InvalidUsernameException,
     PasswordsDoNotMatchException,
     InvalidPasswordException,
+    LoginException,
 )
