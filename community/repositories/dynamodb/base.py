@@ -1,13 +1,31 @@
 from typing import Any, Callable, Literal
+from aioboto3.dynamodb.table import BatchWriter
 from boto3.dynamodb.conditions import ConditionBase
+from mypy_boto3_dynamodb.service_resource import Table
 
-from community.aws import DynamoDB
+from community.aws import AWSResource, DynamoDB, dynamodb
 
 
-class BaseRepository(DynamoDB):
+class BaseRepository:
     table_name: str
     partition_key: str
     sort_key: str | None = None
+    dynamodb: DynamoDB = dynamodb
+    _resource: AWSResource | None = None
+    _table: Table | None = None
+    _batch_writer: BatchWriter | None = None
+
+    @property
+    def table(self) -> Table:
+        if self._table is None:
+            raise Exception("Table is None")
+        return self._table
+    
+    @property
+    def batch_writer(self) -> BatchWriter:
+        if self._batch_writer is None:
+            self._batch_writer = self.table.batch_writer()
+        return self._batch_writer
 
     def _create_params(self, **kwargs: dict) -> dict:
         params = {}
@@ -103,10 +121,15 @@ class BaseRepository(DynamoDB):
             key[self.sort_key] = sort_key
         await self.table.delete_item(Key=key)
 
-    async def delete_items(self, filter_expression: list) -> None:
-        kwargs = {"FilterExpression": filter_expression}
-        async with self.batch_writer:
-            async for item in self.scan(**kwargs):
-                await self.batch_writer.delete_item(
-                    Key={self.partition_key: item[self.partition_key]}
-                )
+    async def delete_items(self, key_expression: list[dict]) -> None:
+        async with self.batch_writer as batch:
+            for key in key_expression:
+                await batch.delete_item(Key=key)
+
+    async def __aenter__(self) -> None:
+        self._resource = await self.dynamodb.resource()
+        self._table = await self._resource.Table(self.table_name)
+    
+    async def __aexit__(self) -> None:
+        await self._resource.close()
+        self._table = None
