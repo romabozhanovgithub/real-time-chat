@@ -20,5 +20,5 @@ class AWSClient:
         return credentials
     
     @property
-    def resource(self) -> ServiceResource:
+    def resource(self) -> AWSResource | ServiceResource:
         return AWSResource(**self.credentials)
