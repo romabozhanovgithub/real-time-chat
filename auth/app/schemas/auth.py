@@ -10,6 +10,14 @@ from app.core.exceptions import (
 )
 
 
+class AccessTokenResponseSchema(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+    class Config(BaseConfig):
+        pass
+
+
 class SignUpRequestSchema(BaseModel):
     id: str | None = Field(default_factory=generate_uuid)
     username: str = Field(..., min_length=5, max_length=20)

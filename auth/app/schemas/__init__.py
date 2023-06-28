@@ -3,5 +3,6 @@ from app.schemas.user import (  # noqa: F401
     UserResponseSchema,
 )
 from app.schemas.auth import (  # noqa: F401
+    AccessTokenResponseSchema,
     SignUpRequestSchema,
 )
