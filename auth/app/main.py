@@ -6,6 +6,8 @@ from app.core.settings import settings
 
 app = FastAPI(title=settings.APP_TITLE, debug=settings.DEBUG)
 community_settings(
+    secret_key=settings.SECRET_KEY,
+    algorithm=settings.ALGORITHM,
     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
     aws_default_region=settings.AWS_DEFAULT_REGION,

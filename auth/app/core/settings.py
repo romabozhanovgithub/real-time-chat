@@ -6,6 +6,9 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     SECRET_KEY: str
     APP_TITLE: str = "Auth Service"
+    # JWT
+    SECRET_KEY: str
+    ALGORITHM: str
     # AWS
     AWS_ACCESS_KEY_ID: str
     AWS_SECRET_ACCESS_KEY: str
