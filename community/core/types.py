@@ -3,6 +3,7 @@ from typing import Any, Mapping, Sequence, Set, Union
 from mypy_boto3_dynamodb.type_defs import (
     QueryOutputTableTypeDef,
     ScanOutputTableTypeDef,
+    UpdateItemOutputTableTypeDef,
 )
 
 ItemTable = Mapping[
@@ -27,6 +28,7 @@ ItemTable = Mapping[
 
 QueryTableResponse = dict | QueryOutputTableTypeDef
 ScanTableResponse = dict | ScanOutputTableTypeDef
+UpdateTableResponse = dict | UpdateItemOutputTableTypeDef
 
 
 class QueryTable:

@@ -1,6 +1,6 @@
 from typing import Any, Literal
 from aioboto3.dynamodb.table import BatchWriter
-from boto3.dynamodb.conditions import ConditionBase
+from boto3.dynamodb.conditions import ConditionBase, Key, Attr
 from mypy_boto3_dynamodb.service_resource import Table
 
 from community.aws import AWSResource, DynamoDB, dynamodb
@@ -9,7 +9,8 @@ from community.core.types import (
     QueryTable,
     QueryTableResponse,
     ScanTable,
-    ScanTableResponse
+    ScanTableResponse,
+    UpdateTableResponse,
 )
 
 
@@ -49,6 +50,19 @@ class BaseRepository:
             key[self.sort_key] = sort_key
         return key
     
+    def __create_update_expression(
+        self, **kwargs: dict[str, Any]
+    ) -> dict[str, Any]:
+        expression = {}
+        update_expression = []
+        expression_attribute_values = {}
+        for key, value in kwargs.items():
+            update_expression.append(f"{key} = :{key}")
+            expression_attribute_values[f":{key}"] = value
+        expression["UpdateExpression"] = "SET " + ", ".join(update_expression)
+        expression["ExpressionAttributeValues"] = expression_attribute_values
+        return expression
+    
     async def _paginate(
         self,
         method: QueryTable | ScanTable,
@@ -82,19 +96,6 @@ class BaseRepository:
             return await self._get_all_items(method, **kwargs)
         response = await method(**kwargs)
         return response
-
-    async def put_item(
-        self, item: ItemTable
-    ) -> dict:
-        await self.table.put_item(Item=item)
-        return item
-
-    async def get_item(
-        self, partition_key: str, sort_key: str | None = None
-    ) -> ItemTable:
-        key = self.__create_primary_key(partition_key, sort_key)
-        response: ItemTable = await self.table.get_item(Key=key)
-        return response.get("Item", {})
     
     async def _query(
         self,
@@ -117,6 +118,33 @@ class BaseRepository:
         return await self._get_items(
             self.table.query, all_items, **kwargs
         )
+    
+    async def _scan(
+        self,
+        filter_expression: ConditionBase | None = None,
+        select: str | None = None,
+        all_items: bool = False,
+    ) -> ScanTableResponse:
+        kwargs = self.__create_params(
+            FilterExpression=filter_expression,
+            Select=select,
+        )
+        return await self._get_items(
+            self.table.scan, all_items, **kwargs
+        )
+
+    async def put_item(
+        self, item: ItemTable
+    ) -> dict:
+        await self.table.put_item(Item=item)
+        return item
+
+    async def get_item(
+        self, partition_key: str, sort_key: str | None = None
+    ) -> ItemTable:
+        key = self.__create_primary_key(partition_key, sort_key)
+        response: ItemTable = await self.table.get_item(Key=key)
+        return response.get("Item", {})
 
     async def query(
         self,
@@ -138,20 +166,6 @@ class BaseRepository:
             all_items,
         )
         return response.get("Items", [])
-    
-    async def _scan(
-        self,
-        filter_expression: ConditionBase | None = None,
-        select: str | None = None,
-        all_items: bool = False,
-    ) -> ScanTableResponse:
-        kwargs = self.__create_params(
-            FilterExpression=filter_expression,
-            Select=select,
-        )
-        return await self._get_items(
-            self.table.scan, all_items, **kwargs
-        )
 
     async def scan(
         self,
@@ -165,10 +179,23 @@ class BaseRepository:
             all_items,
         )
         return response.get("Items", [])
-
-    async def put_item(self, item: ItemTable) -> ItemTable:
-        await self.table.put_item(Item=item)
-        return item
+    
+    async def update_item(
+        self,
+        partition_key: str,
+        sort_key: str | None = None,
+        return_values: str = "UPDATED_NEW",
+        **kwargs: dict[str, Any],
+    ) -> ItemTable:
+        key = self.__create_primary_key(partition_key, sort_key)
+        update_expression = self.__create_update_expression(**kwargs)
+        params = self.__create_params(
+            Key=key,
+            ReturnValues=return_values,
+            **update_expression,
+        )
+        response: UpdateTableResponse = await self.table.update_item(**params)
+        return response.get("Attributes", {})
 
     async def delete_item(
         self, partition_key: str, sort_key: str | None = None
