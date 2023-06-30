@@ -51,12 +51,12 @@ class BaseRepository:
         return key
     
     def __create_update_expression(
-        self, **kwargs: dict[str, Any]
+        self, data: dict[str, Any]
     ) -> dict[str, Any]:
         expression = {}
         update_expression = []
         expression_attribute_values = {}
-        for key, value in kwargs.items():
+        for key, value in data.items():
             update_expression.append(f"{key} = :{key}")
             expression_attribute_values[f":{key}"] = value
         expression["UpdateExpression"] = "SET " + ", ".join(update_expression)
@@ -183,12 +183,12 @@ class BaseRepository:
     async def update_item(
         self,
         partition_key: str,
+        data: dict[str, Any],
         sort_key: str | None = None,
         return_values: str = "UPDATED_NEW",
-        **kwargs: dict[str, Any],
     ) -> ItemTable:
         key = self.__create_primary_key(partition_key, sort_key)
-        update_expression = self.__create_update_expression(**kwargs)
+        update_expression = self.__create_update_expression(data)
         params = self.__create_params(
             Key=key,
             ReturnValues=return_values,
